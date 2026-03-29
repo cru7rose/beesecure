@@ -155,16 +155,6 @@ body {
   }
 }
 
-.canva-panel-label {
-  flex-shrink: 0;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(212, 175, 55, 0.65);
-  border-bottom: 1px solid #1f1f1f;
-}
-
 .canva-panel-scroll {
   flex: 1;
   min-height: 0;
@@ -307,18 +297,6 @@ body {
   font-size: 0.65rem;
   line-height: 1.4;
   color: rgba(230, 215, 170, 0.88);
-}
-
-.canva-pixel-note {
-  margin: 1.5rem 0 0;
-  font-size: 0.62rem;
-  line-height: 1.45;
-  color: #666;
-}
-
-.canva-pixel-note code {
-  color: #8a7a40;
-  font-size: 0.9em;
 }
 
 .map-panel {

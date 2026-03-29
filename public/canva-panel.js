@@ -149,12 +149,6 @@ function render() {
     grid.appendChild(renderSection(spec));
   }
   root.appendChild(grid);
-
-  const note = document.createElement('p');
-  note.className = 'canva-pixel-note';
-  note.innerHTML =
-    'Dla wersji pikselowo identycznej z Canvą wyeksportuj slajd jako PNG i zapisz jako <code>public/assets/canva-slide-full.png</code> (albo ustaw <code>src</code> w <code>#canva-raster</code>).';
-  root.appendChild(note);
 }
 
 if (document.readyState === 'loading') {
