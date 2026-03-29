@@ -24,6 +24,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'public/index.html'),
         export: path.resolve(__dirname, 'public/export.html'),
+        wbs: path.resolve(__dirname, 'public/wbs.html'),
       },
     },
   },

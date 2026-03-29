@@ -26,6 +26,7 @@ npm run dev
 ```
 
 - **Mapa:** http://localhost:5173/  
+- **WBS i harmonogram (Gantt):** http://localhost:5173/wbs.html  
 - **Eksport graficzny (Canva / PDF):** http://localhost:5173/export.html  
 
 Edycje węzłów domyślnie w **localStorage** (`beesecure_node_edits`). Opcjonalnie API zapisujące do pliku:
