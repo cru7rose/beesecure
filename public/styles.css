@@ -117,13 +117,13 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  min-height: calc(100vh - 120px);
+  min-height: calc(100vh - 72px);
 }
 
 .split-main > .canva-panel,
 .split-main > .map-panel {
   min-height: 0;
-  max-height: calc(100vh - 118px);
+  max-height: calc(100vh - 70px);
 }
 
 @media (max-width: 900px) {
@@ -534,16 +534,4 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-.footer {
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-  border-top: 1px solid var(--border);
-}
-
-.footer code {
-  font-size: 0.85em;
-  color: var(--gold);
 }

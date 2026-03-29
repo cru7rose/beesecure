@@ -99,16 +99,15 @@ function initCy() {
       style: {
         label: 'data(label)',
         'text-valign': 'bottom',
-        // push label further below the square so it does not touch the icon
-        'text-margin-y': 14,
+        // większy margines — miejsce na dwie linie etykiety pod kwadratem
+        'text-margin-y': (el) => (el.data('depth') === 0 ? 20 : el.data('depth') === 1 ? 16 : 18),
         'text-halign': 'center',
-        // slightly larger fonts for top-level nodes so CEOs can read them easily
         'font-size': (el) => (el.data('depth') === 0 ? 13 : el.data('depth') === 1 ? 11 : 9),
         'font-family': 'Outfit, sans-serif',
         color: '#e6edf3',
-        // wider labels and stronger background for better contrast
-        'text-max-width': (el) => (el.data('depth') <= 1 ? 130 : 100),
-        'text-wrap': 'ellipsis',
+        // wrap zamiast ellipsis — pełny tekst w 1–2 liniach (także \n z danych)
+        'text-max-width': (el) => (el.data('depth') === 0 ? 170 : el.data('depth') === 1 ? 150 : 132),
+        'text-wrap': 'wrap',
         'text-background-color': 'rgba(15, 23, 42, 0.98)',
         'text-background-padding': '4px 6px',
         'text-background-shape': 'roundrectangle',
@@ -134,9 +133,9 @@ function initCy() {
       style: {
         width: 100,
         height: 100,
-        'text-margin-y': 18,
+        'text-margin-y': 22,
         'font-size': 14,
-        'text-max-width': 150,
+        'text-max-width': 180,
       },
     },
     {
@@ -177,7 +176,7 @@ function initCy() {
     name: 'concentric',
     concentric: (node) => 100 - (node.data('depth') ?? 0),
     levelWidth: () => 1,
-    minNodeSpacing: 70,
+    minNodeSpacing: 88,
     padding: 50,
     startAngle: (3 / 2) * Math.PI,
     sweep: 2 * Math.PI,
