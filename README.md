@@ -4,7 +4,7 @@ Interaktywna mapa **BeeSecure** w Cytoscape.js: przesuwanie, zoom, panel szczeg�
 
 ## Zawartość mapy
 
-- **BeeSecure** (środek) → **Warunki satysfakcji** · **Harmonogram** (4 fazy) · **Produkty** · **Zasoby** · **Zagrożenia** · **Zakres**
+- **BeeSecure** (środek) → **Warunki satysfakcji** · **Cele** (cel główny + cele szczegółowe) · **Harmonogram** (4 fazy) · **Produkty** · **Zasoby** · **Zagrożenia** · **Zakres**
 - Podwęzły z opisami zgodnymi z treścią z Canva (koszty, self check-in, skalowanie, klucze, bezpieczeństwo, konkurencyjność; fazy 1–24 mies.; zamek, gateway, aplikacja, algorytm; budżet/czas/zespół/partner/zaplecze; ryzyka; zakres prac).
 
 Dane: `public/data/beesecure-mindmap-data.js`.  
@@ -27,6 +27,7 @@ npm run dev
 
 - **Mapa:** http://localhost:5173/  
 - **WBS i harmonogram (Gantt):** http://localhost:5173/wbs.html  
+- **Diagram blokowy architektury:** http://localhost:5173/diagram.html  
 - **Eksport graficzny (Canva / PDF):** http://localhost:5173/export.html  
 
 Edycje węzłów domyślnie w **localStorage** (`beesecure_node_edits`). Opcjonalnie API zapisujące do pliku:

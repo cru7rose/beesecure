@@ -19,6 +19,12 @@ const SECTIONS = [
     ids: ['war-koszty', 'war-self', 'war-skal', 'war-zero', 'war-bezp', 'war-konk'],
   },
   {
+    title: 'Cele',
+    headerMaterial: 'flag',
+    introFrom: 'cele',
+    ids: ['cele-glowny', 'cele-koszty', 'cele-1000', 'cele-zero', 'cele-self', 'cele-bezp', 'cele-wizer'],
+  },
+  {
     title: 'Harmonogram',
     headerMaterial: 'calendar_month',
     introFrom: 'harmonogram',

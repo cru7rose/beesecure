@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="./assets/beesecure-logo-canva.png" />
+  <title>BeeSecure – Diagram blokowy architektury</title>
+  <link rel="stylesheet" href="./diagram.css" />
+</head>
+<body>
+  <nav class="wbs-site-nav" aria-label="Nawigacja projektu">
+    <a href="./index.html">Mind map</a>
+    <a href="./wbs.html">WBS &amp; harmonogram</a>
+    <span class="current" aria-current="page">Diagram blokowy</span>
+  </nav>
+
+  <header class="diag-header">
+    <div class="diag-header-mark" aria-hidden="true">📐</div>
+    <div>
+      <h1>BeeSecure – KeyLock</h1>
+      <p>Diagram blokowy systemu · przepływ danych i warstwy</p>
+    </div>
+  </header>
+
+  <main class="diag-main">
+    <p class="diag-intro">
+      Architektura logiczna: użytkownicy korzystają z panelu webowego lub bezpośrednio z zamka;
+      centrum to serwer i API; w obiekcie gateway łączy sieć lokalną z siecią ZigBee urządzeń.
+    </p>
+
+    <div class="diagram-svg-wrap" role="img" aria-label="Diagram blokowy architektury BeeSecure">
+      <svg viewBox="0 0 920 520" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <marker id="arrow-gold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="var(--gold)" />
+          </marker>
+          <marker id="arrow-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="rgba(212,160,23,0.45)" />
+          </marker>
+        </defs>
+
+        <!-- Warstwa chmury -->
+        <text x="460" y="22" text-anchor="middle" fill="var(--text-muted)" font-size="11" letter-spacing="0.2em" font-family="Georgia,serif">WARSTWA CENTRALNA (CHMURA / DC)</text>
+
+        <rect x="320" y="38" width="280" height="56" rx="8" fill="var(--bg)" stroke="var(--gold)" stroke-width="1.2" />
+        <text x="460" y="62" text-anchor="middle" fill="var(--gold-light)" font-size="13" font-family="Georgia,serif">Panel webowy BeeSecure</text>
+        <text x="460" y="80" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">HTTPS · operator, właściciel, serwisant</text>
+
+        <rect x="320" y="108" width="280" height="72" rx="8" fill="var(--bg)" stroke="var(--accent-blue)" stroke-width="1.2" opacity="0.95" />
+        <text x="460" y="135" text-anchor="middle" fill="var(--gold-light)" font-size="13" font-family="Georgia,serif">Serwer + API</text>
+        <text x="460" y="154" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">Logika dostępu · kody czasowe · seed 12-cyfrowy</text>
+        <text x="460" y="168" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">Rejestracja zdarzeń · synchronizacja z urządzeniami</text>
+
+        <!-- Użytkownicy -->
+        <text x="118" y="205" text-anchor="middle" fill="var(--text-muted)" font-size="11" letter-spacing="0.15em" font-family="Georgia,serif">UŻYTKOWNICY</text>
+
+        <rect x="38" y="218" width="160" height="48" rx="8" fill="var(--bg)" stroke="var(--border)" stroke-width="1" />
+        <text x="118" y="238" text-anchor="middle" fill="var(--text)" font-size="12" font-family="Georgia,serif">Operator / właściciel</text>
+        <text x="118" y="254" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">zarządzanie dostępem</text>
+
+        <rect x="38" y="278" width="160" height="48" rx="8" fill="var(--bg)" stroke="var(--border)" stroke-width="1" />
+        <text x="118" y="298" text-anchor="middle" fill="var(--text)" font-size="12" font-family="Georgia,serif">Serwisant</text>
+        <text x="118" y="314" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">kody serwisowe</text>
+
+        <rect x="38" y="338" width="160" height="56" rx="8" fill="var(--bg)" stroke="var(--accent-green)" stroke-width="1" />
+        <text x="118" y="362" text-anchor="middle" fill="var(--text)" font-size="12" font-family="Georgia,serif">Gość</text>
+        <text x="118" y="378" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">PIN / kody na zamku</text>
+
+        <!-- Strzałki użytkownik → panel -->
+        <path d="M 198 242 L 300 242 L 300 66 L 318 66" fill="none" stroke="var(--gold)" stroke-width="1.2" marker-end="url(#arrow-gold)" />
+        <path d="M 198 302 L 280 302 L 280 66 L 318 66" fill="none" stroke="var(--gold)" stroke-width="1.2" marker-end="url(#arrow-gold)" />
+        <text x="250" y="232" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">HTTPS</text>
+
+        <!-- Panel → serwer -->
+        <path d="M 460 94 L 460 106" fill="none" stroke="var(--gold)" stroke-width="1.5" marker-end="url(#arrow-gold)" />
+
+        <!-- Serwer → gateway -->
+        <path d="M 460 180 L 460 250 L 618 250" fill="none" stroke="var(--gold)" stroke-width="1.2" marker-end="url(#arrow-gold)" />
+        <text x="520" y="240" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">TLS / MQTT / REST</text>
+
+        <!-- Obiekt -->
+        <text x="720" y="205" text-anchor="middle" fill="var(--text-muted)" font-size="11" letter-spacing="0.15em" font-family="Georgia,serif">OBIEKT (LOKALNIE)</text>
+
+        <rect x="620" y="218" width="200" height="64" rx="8" fill="var(--bg)" stroke="var(--accent-blue)" stroke-width="1.2" />
+        <text x="720" y="244" text-anchor="middle" fill="var(--gold-light)" font-size="13" font-family="Georgia,serif">Gateway</text>
+        <text x="720" y="262" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">WiFi / LAN · koordynator ZigBee</text>
+
+        <rect x="620" y="298" width="200" height="76" rx="8" fill="var(--bg)" stroke="var(--gold)" stroke-width="1.2" />
+        <text x="720" y="326" text-anchor="middle" fill="var(--gold-light)" font-size="13" font-family="Georgia,serif">Zamek elektroniczny</text>
+        <text x="720" y="344" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">Pinpad · moduł ZigBee · zasilanie</text>
+        <text x="720" y="360" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">Algorytm rotacyjny (offline)</text>
+
+        <!-- Gateway → zamek -->
+        <path d="M 720 282 L 720 296" fill="none" stroke="var(--gold)" stroke-width="1.5" marker-end="url(#arrow-gold)" />
+        <text x="735" y="292" fill="var(--accent-green)" font-size="9" font-family="Georgia,serif">ZigBee</text>
+
+        <!-- Gość → zamek (lokalnie) -->
+        <path d="M 198 366 Q 400 420 620 340" fill="none" stroke="rgba(29,158,117,0.7)" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrow-muted)" />
+        <text x="400" y="418" text-anchor="middle" fill="var(--accent-green)" font-size="9" font-family="Georgia,serif">wprowadzenie kodu przy drzwiach</text>
+
+        <!-- EasyRentals note -->
+        <rect x="320" y="400" width="280" height="40" rx="6" fill="rgba(212,160,23,0.06)" stroke="var(--border)" stroke-width="1" />
+        <text x="460" y="420" text-anchor="middle" fill="var(--text-muted)" font-size="10" font-family="Georgia,serif">Integracja z partnerem · np. EasyRentals (kanał zamówień / dane obiektu)</text>
+        <text x="460" y="434" text-anchor="middle" fill="var(--text-muted)" font-size="9" font-family="Georgia,serif">(opcjonalnie · API / webhook)</text>
+
+        <path d="M 460 388 L 460 398" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3 3" />
+      </svg>
+    </div>
+
+    <section class="diag-legend" aria-labelledby="diag-legend-title">
+      <h2 id="diag-legend-title">Legenda</h2>
+      <ul>
+        <li><strong>HTTPS</strong> — dostęp do panelu i API z przeglądarki.</li>
+        <li><strong>TLS / MQTT / REST</strong> — kanał z serwera do gateway w obiekcie (model zależny od wdrożenia).</li>
+        <li><strong>ZigBee</strong> — sieć bezprzewodowa między gateway a zamkami.</li>
+        <li><strong>Kody lokalne</strong> — gość może otworzyć zamek kodem bez udziału personelu; synchronizacja seed może działać także przy ograniczonej łączności.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

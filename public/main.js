@@ -186,6 +186,7 @@ function initCy() {
     sort: (node) => {
       const order = [
         'warunki',
+        'cele',
         'harmonogram',
         'produkty',
         'zasoby',
