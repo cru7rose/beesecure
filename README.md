@@ -69,10 +69,16 @@ Ciemne tło, kwadratowe węzły z ikoną w środku, obramowania w kolorze gałę
 ### GitHub Pages (darmowy link do udostępnienia)
 
 1. Wypchnij repo na GitHub (np. nazwa repozytorium `beesecure-mindmap`).
-2. **Settings → Pages → Build and deployment**: źródło **GitHub Actions** (nie „Deploy from branch”).
-3. Po pierwszym pushu na `main` (lub `master`) workflow **Deploy to GitHub Pages** zbuduje stronę z `VITE_BASE_PATH` = **nazwa repozytorium**.
-4. Link publiczny: **`https://<twoj-login>.github.io/<nazwa-repo>/`**  
+2. **Settings → Pages → Build and deployment**  
+   - **Source** musi być **GitHub Actions** (wybierz z listy i zapisz).  
+   - Jeśli jest **None** albo **Deploy from a branch**, krok **deploy** w workflow zwróci **404** (*Failed to create deployment*).  
+   - Po zmianie na **GitHub Actions** uruchom workflow ponownie: **Actions** → **Deploy to GitHub Pages** → **Re-run all jobs**.
+3. Pierwszy raz możesz zobaczyć prośbę o zatwierdzenie środowiska **`github-pages`** (Settings → Environments) — zaakceptuj wdrożenie.
+4. Po pushu na `main` (lub `master`) workflow zbuduje stronę z `VITE_BASE_PATH` = **nazwa repozytorium** (np. repo `beesecure` → ścieżka `/beesecure/`).
+5. Link publiczny: **`https://<twoj-login>.github.io/<nazwa-repo>/`**  
    Eksport graficzny: **`.../<nazwa-repo>/export.html`**
+
+**Prywatne repozytorium:** na darmowym koncie GitHub Pages z Actions jest ograniczone; jeśli nadal 404, sprawdź [dokumentację](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) albo ustaw repo na **public**.
 
 Podgląd jak na GitHub Pages (z prefiksem `/nazwa-repo/`):  
 `VITE_BASE_PATH=nazwa-repo npm run build && VITE_BASE_PATH=nazwa-repo npx vite preview` → w terminalu zobaczysz URL (np. http://localhost:4173/nazwa-repo/).

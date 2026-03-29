@@ -1,6 +1,8 @@
 # GitHub Pages — publiczny link: https://<user>.github.io/<repo>/
 name: Deploy to GitHub Pages
 
+# Uruchamia się przy pushu tylko na te gałęzie — jeśli pracujesz np. na `develop`,
+# dopisz ją do listy albo zrób merge do `main`, albo użyj „Run workflow” (workflow_dispatch).
 on:
   push:
     branches: [main, master]
@@ -23,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
 
       - name: Install
@@ -38,9 +40,11 @@ jobs:
       - name: Disable Jekyll (GitHub Pages)
         run: touch dist/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
+      # v4: domyślnie pomija pliki ukryte — .nojekyll musi wejść do artefaktu
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
+          include-hidden-files: true
 
   deploy:
     needs: build
