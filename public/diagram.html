@@ -25,7 +25,7 @@
   <div class="topbar-title">Diagram blokowy WBS</div>
   <div class="time-wrap">
     <label>Miesiąc:</label>
-    <input type="range" min="0" max="24" value="0" id="slider" oninput="updateTime(this.value)">
+    <input type="range" min="0" max="24" value="0" id="slider" oninput="updateTime(this.value)" aria-label="Miesiąc projektu">
     <div class="time-badge" id="timeBadge">Start</div>
     <div class="phase-pill" id="phasePill" style="border-color:#3B8BD4;color:#3B8BD4">▶ F1</div>
     <div>
@@ -37,11 +37,47 @@
 
 <!-- ══ MAIN ══ -->
 <div class="main">
+  <section class="diagram-editor" aria-label="Edycja struktury WBS">
+    <div class="diagram-editor-title">Kreator WBS</div>
+    <div class="diagram-editor-row">
+      <label class="diagram-editor-field">
+        <span>Nowy obszar (L1)</span>
+        <input type="text" id="wpNewL1Name" placeholder="np. Integracja z ERP" maxlength="80" />
+      </label>
+      <button type="button" class="diagram-editor-btn" onclick="editorAddL1()">+ Obszar L1</button>
+    </div>
+    <div class="diagram-editor-row">
+      <label class="diagram-editor-field">
+        <span>Rodzic (L1)</span>
+        <select id="wpParentSelect" aria-label="Obszar nadrzędny dla podpakietu"></select>
+      </label>
+      <label class="diagram-editor-field">
+        <span>Nowy podpakiet (L2)</span>
+        <input type="text" id="wpNewL2Name" placeholder="np. API REST" maxlength="80" />
+      </label>
+      <button type="button" class="diagram-editor-btn" onclick="editorAddL2()">+ Podpakiet L2</button>
+    </div>
+    <div class="diagram-editor-row">
+      <label class="diagram-editor-field">
+        <span>Wybrany kod (klik w blok lub wpisz)</span>
+        <input type="text" id="wpPickedLabel" placeholder="np. 3 lub 3.2" maxlength="12" autocomplete="off" />
+      </label>
+      <label class="diagram-editor-field">
+        <span>Nowa nazwa (zmiana)</span>
+        <input type="text" id="wpRenameName" placeholder="Nowa nazwa pakietu" maxlength="80" />
+      </label>
+      <button type="button" class="diagram-editor-btn" onclick="editorRename()">Zmień nazwę</button>
+      <button type="button" class="diagram-editor-btn diagram-editor-btn--danger" onclick="editorRemove()">Usuń pakiet</button>
+      <button type="button" class="diagram-editor-btn diagram-editor-btn--muted" onclick="editorResetWbs()">Przywróć domyślny WBS</button>
+    </div>
+    <p class="diagram-editor-hint">Zmiany zapisują się w tej samej pamięci co harmonogram (WBS) — odśwież drugą kartę lub wróć do zakładki harmonogramu, aby zobaczyć efekt.</p>
+  </section>
+
   <div class="diagram-header">
     <div>
       <div class="diagram-header-lbl">Work Breakdown Structure</div>
       <h1>BeeSecure – KeyLock</h1>
-      <p>Hierarchiczna dekompozycja zakresu projektu &nbsp;·&nbsp; 7 obszarów &nbsp;·&nbsp; 37 pakietów prac &nbsp;·&nbsp; 24 miesiące &nbsp;·&nbsp; 1,5 mln zł</p>
+      <p id="diagramMetaLine">…</p>
     </div>
     <div style="text-align:right">
       <div style="font-size:13px;color:var(--text-muted)">Aktualny postęp (suwak)</div>
@@ -49,19 +85,7 @@
     </div>
   </div>
 
-  <div class="legend">
-    <div class="legend-item"><div class="ld" style="background:#3B8BD4"></div>1. Zamek elektroniczny</div>
-    <div class="legend-item"><div class="ld" style="background:#1D9E75"></div>2. Gateway</div>
-    <div class="legend-item"><div class="ld" style="background:#D4A017"></div>3. Aplikacja webowa</div>
-    <div class="legend-item"><div class="ld" style="background:#D85A30"></div>4. Algorytm kluczy</div>
-    <div class="legend-item"><div class="ld" style="background:#9B59B6"></div>5. Testy</div>
-    <div class="legend-item"><div class="ld" style="background:#E74C3C"></div>6. Wdrożenie</div>
-    <div class="legend-item"><div class="ld" style="background:#888070"></div>7. Zarządzanie</div>
-    <div class="legend-divider"></div>
-    <div class="legend-item"><div class="ld" style="background:#4ecda0"></div>✓ Gotowe</div>
-    <div class="legend-item"><div class="ld" style="background:var(--gold)"></div>W toku</div>
-    <div class="legend-item"><div class="ld" style="background:rgba(255,255,255,0.12)"></div>Oczekuje</div>
-  </div>
+  <div class="legend" id="diagramLegend" aria-live="polite"></div>
 
   <div id="blockTree"></div>
 </div>

@@ -39,6 +39,51 @@
   .diagram-header p { font-size: 14px; color: var(--text-muted); margin-top: 5px; line-height: 1.5; }
   .diagram-header-lbl { font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 4px; }
 
+  /* ══ WBS EDITOR ══ */
+  .diagram-editor {
+    margin-bottom: 22px; padding: 16px 18px; background: var(--bg2);
+    border-radius: 10px; border: 1px solid var(--border);
+  }
+  .diagram-editor-title {
+    font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em;
+    margin-bottom: 12px; font-weight: bold;
+  }
+  .diagram-editor-row {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px; margin-bottom: 12px;
+  }
+  .diagram-editor-row:last-of-type { margin-bottom: 0; }
+  .diagram-editor-field {
+    display: flex; flex-direction: column; gap: 5px; min-width: 140px; flex: 1 1 160px;
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .diagram-editor-field input,
+  .diagram-editor-field select {
+    font-family: inherit; font-size: 14px; text-transform: none; letter-spacing: normal;
+    padding: 8px 11px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text); outline: none;
+  }
+  .diagram-editor-field select { cursor: pointer; }
+  .diagram-editor-btn {
+    flex-shrink: 0; align-self: flex-end; padding: 9px 14px; border-radius: 8px;
+    border: 1px solid var(--gold-dark); background: linear-gradient(180deg, var(--gold-light), var(--gold));
+    color: #0A0A08; font-weight: bold; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .diagram-editor-btn:hover { filter: brightness(1.06); }
+  .diagram-editor-btn--danger {
+    border-color: #8b2c2c; background: linear-gradient(180deg, #c94a4a, #a03030); color: #fff;
+  }
+  .diagram-editor-btn--muted {
+    border-color: var(--border); background: var(--bg3); color: var(--text-muted); font-weight: 600;
+  }
+  .diagram-editor-hint {
+    margin-top: 14px; font-size: 12px; color: var(--text-muted); line-height: 1.5; text-transform: none; letter-spacing: normal;
+  }
+
+  .l1-box.diagram-picked,
+  .l2-box.diagram-picked {
+    box-shadow: 0 0 0 2px var(--gold-light), 0 6px 20px rgba(0,0,0,0.45);
+  }
+
   /* ══ LEGEND ══ */
   .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; padding: 12px 18px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); align-items: center; }
   .legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--text-muted); }
