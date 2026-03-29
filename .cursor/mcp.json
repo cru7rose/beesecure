@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "Canva": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote@latest", "https://mcp.canva.com/mcp"]
+    },
+    "beesecure-canvas": {
+      "command": "node",
+      "args": ["mcp/canvas-mcp-server.mjs"],
+      "cwd": "${workspaceFolder}",
+      "env": {}
+    },
+    "beesecure-supabase": {
+      "command": "node",
+      "args": ["mcp/supabase-mcp-server.mjs"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "SUPABASE_URL": "",
+        "SUPABASE_ANON_KEY": ""
+      }
+    }
+  }
+}

@@ -50,13 +50,34 @@ Po kliknięciu węzła: tytuł pod kwadratem, opis, notatki do prezentacji. **Za
 
 Ciemne tło, kwadratowe węzły z ikoną w środku, obramowania w kolorze gałęzi (`BEESECURE_BRANCH_COLORS`).
 
-## Supabase (opcjonalnie)
+## Supabase — czy „wrzucić projekt”?
 
-Stare migracje/seedy pod TMS mogą nie pasować do nowych id węzłów BeeSecure. Jeśli używasz bazy, dostosuj seed lub tabelę `mind_map_nodes` do struktury z `beesecure-mindmap-data.js`.
+**Supabase nie hostuje frontu** w stylu „wrzuć folder i masz stronę”. To **PostgreSQL + API + Auth + Storage**. Typowy układ:
 
-## Deploy
+1. **Frontend (ta aplikacja Vite):** zbuduj `npm run build` i wdróż **`dist/`** na **Vercel**, **Netlify**, **Cloudflare Pages** (lub innym hostingu statycznym). W panelu hosta ustaw zmienne środowiskowe: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (i ewentualnie `VITE_LOCAL_API_URL` jeśli używasz własnego API).
+2. **Backend / dane:** w projekcie Supabase (**SQL Editor** lub `supabase db push`) uruchom migracje z `supabase/migrations/`. Migracja `20260329120000_beesecure_branch_check.sql` dopuszcza gałęzie BeeSecure (`warunki`, `harmonogram`, …) w kolumnie `branch`.
+3. **Wypełnienie tabeli:** dodaj wiersze do `mind_map_nodes` (id jak w `beesecure-mindmap-data.js`: `root`, `warunki`, `war-koszty`, …). Stare seedy TMS (`seed_danxils_three_ways.sql`) nie odpowiadają tej mapie — zrób własny seed lub import z SQL.
 
-`npm run build`, serwuj `dist` (np. Vercel / Netlify).
+**Co robi aplikacja z Supabase dziś:** przy otwarciu węzła, jeśli są ustawione `VITE_SUPABASE_*`, odczytuje **`description`** z `mind_map_nodes` i może nim nadpisać tekst w panelu. **Zapis z panelu** idzie nadal do **localStorage** / **lokalnego API** (`node-edits.json`), nie do `upsert` w Supabase — pełna synchronizacja zapisu wymagałaby dopisania wywołań `supabase.from('mind_map_nodes').upsert(...)` (np. po zalogowaniu + RLS).
+
+**Storage Supabase** teoretycznie może serwować pliki z `dist/`, ale to nietypowe i gorsze niż dedykowany hosting SPA (routing, nagłówki, CDN). **Edge Functions** nie zastąpią wygodnie całego Vite — sensowniej trzymać front osobno.
+
+## Deploy (frontend)
+
+`npm run build`, serwuj **`dist/`** (Vercel / Netlify / Cloudflare Pages) + zmienne `VITE_SUPABASE_*` jeśli używasz bazy.
+
+### GitHub Pages (darmowy link do udostępnienia)
+
+1. Wypchnij repo na GitHub (np. nazwa repozytorium `beesecure-mindmap`).
+2. **Settings → Pages → Build and deployment**: źródło **GitHub Actions** (nie „Deploy from branch”).
+3. Po pierwszym pushu na `main` (lub `master`) workflow **Deploy to GitHub Pages** zbuduje stronę z `VITE_BASE_PATH` = **nazwa repozytorium**.
+4. Link publiczny: **`https://<twoj-login>.github.io/<nazwa-repo>/`**  
+   Eksport graficzny: **`.../<nazwa-repo>/export.html`**
+
+Podgląd jak na GitHub Pages (z prefiksem `/nazwa-repo/`):  
+`VITE_BASE_PATH=nazwa-repo npm run build && VITE_BASE_PATH=nazwa-repo npx vite preview` → w terminalu zobaczysz URL (np. http://localhost:4173/nazwa-repo/).
+
+Zmienne `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` możesz dodać w **Settings → Secrets and variables → Actions** jako zaszyfrowane i przekazać do kroku `Build` w workflow (wtedy dopisz `env:` w jobie — domyślnie workflow ich nie ustawia).
 
 ---
 

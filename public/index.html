@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BeeSecure – Warunki satysfakcji</title>
+  <link rel="icon" type="image/png" href="./assets/beesecure-logo-canva.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img
+        class="logo-img logo-img--canva"
+        src="./assets/beesecure-logo-canva.png"
+        alt="BeeSecure – inteligentna kontrola dostępu"
+        width="220"
+        height="72"
+      />
+      <p class="logo-map-context">Lewo: materiał referencyjny (Canva) · Prawo: mapa interaktywna z klientem</p>
+    </div>
+  </header>
+
+  <main class="main split-main">
+    <section class="canva-panel" aria-label="Widok referencyjny zgodny z Canvą">
+      <div class="canva-panel-label">Canva — referencja 1:1 (PNG) lub odtworzenie treści</div>
+      <div class="canva-panel-scroll">
+        <img
+          id="canva-raster"
+          class="canva-raster canva-raster--hidden"
+          alt="Eksport slajdu Canva — Warunki satysfakcji"
+          width="800"
+          height="1200"
+          decoding="async"
+        />
+        <div id="canva-slide-root"></div>
+      </div>
+    </section>
+
+    <section class="map-panel" aria-label="Interaktywna mapa myśli">
+      <div class="map-toolbar">
+        <span class="map-toolbar-title">Mapa · legenda</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">task_alt</span> Warunki</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">calendar_month</span> Harmonogram</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">category</span> Produkty</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">inventory_2</span> Zasoby</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">warning</span> Zagrożenia</span>
+        <span class="legend-item"><span class="legend-icon material-symbols-outlined" aria-hidden="true">design_services</span> Zakres</span>
+      </div>
+      <div id="cy" class="cy-container"></div>
+      <aside id="detail-panel" class="detail-panel hidden" aria-live="polite">
+        <button type="button" class="detail-close" id="detail-close" aria-label="Zamknij">×</button>
+        <div class="detail-content">
+          <div class="detail-icon" id="detail-icon"></div>
+          <h2 id="detail-title"></h2>
+          <p id="detail-body" class="detail-body-readonly"></p>
+          <div class="detail-edit" id="detail-edit" aria-label="Edycja węzła">
+            <p class="detail-edit-hint">Dodatkowe informacje do projektu i prezentacji. Zapis w przeglądarce lub lokalnym API.</p>
+            <label class="detail-label" for="detail-label">Tytuł węzła (pod kwadratem)</label>
+            <input id="detail-label" class="detail-textarea" type="text" placeholder="Krótka nazwa pod kwadratem…" />
+            <label class="detail-label" for="detail-desc">Opis / szczegóły</label>
+            <textarea id="detail-desc" class="detail-textarea" rows="4" placeholder="Opis w panelu…"></textarea>
+            <label class="detail-label" for="detail-notes">Notatki do prezentacji</label>
+            <textarea id="detail-notes" class="detail-textarea" rows="3" placeholder="Kluczowe punkty, decyzje…"></textarea>
+            <div class="detail-actions">
+              <button type="button" class="btn btn-save" id="detail-save">Zapisz</button>
+              <button type="button" class="btn btn-reset" id="detail-reset">Przywróć domyślne</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Lewo: slajd Canvy (dodaj <code>public/assets/canva-slide-full.png</code> dla eksportu 1:1). Prawo: przeciągaj, zoom scroll, klik węzeł — panel szczegółów.</p>
+  </footer>
+
+  <script type="module" src="./canva-panel.js"></script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
