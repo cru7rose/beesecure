@@ -1,0 +1,93 @@
+/**
+ * Wspólny pasek: logo Canva + nawigacja między podstronami.
+ * Dołączany na: index, export, wbs, diagram.
+ */
+.site-chrome {
+  --sc-bg: #131310;
+  --sc-border: rgba(212, 160, 23, 0.22);
+  --sc-muted: #888070;
+  --sc-text: #e8e4d4;
+  --sc-gold: #d4a017;
+  --sc-gold-light: #f5c842;
+  display: flex;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  flex-wrap: wrap;
+  padding: 10px 22px 10px 20px;
+  background: var(--sc-bg);
+  border-bottom: 1px solid var(--sc-border);
+  flex-shrink: 0;
+}
+
+.site-chrome-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.site-chrome-brand:focus-visible {
+  outline: 2px solid var(--sc-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.site-chrome-logo {
+  height: 44px;
+  width: auto;
+  max-width: min(240px, 52vw);
+  object-fit: contain;
+  display: block;
+}
+
+.site-chrome-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-left: auto;
+}
+
+.site-chrome-link {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-muted);
+  text-decoration: none;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--sc-border);
+  font-family: Georgia, 'Times New Roman', serif;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.site-chrome-link:hover {
+  color: var(--sc-gold-light);
+  border-color: var(--sc-gold);
+}
+
+.site-chrome-current {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-gold-light);
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--sc-gold);
+  pointer-events: none;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* Kontekst pod menu (np. mind map) */
+.site-chrome-context {
+  margin: 0;
+  padding: 0.4rem 1.5rem 0.55rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: var(--muted, #8b949e);
+  letter-spacing: 0.02em;
+  background: var(--surface, #1a2332);
+  border-bottom: 1px solid var(--border, #30363d);
+  font-family: 'Outfit', system-ui, sans-serif;
+}

@@ -8,7 +8,8 @@ Interaktywna mapa **BeeSecure** w Cytoscape.js: przesuwanie, zoom, panel szczeg�
 - Podwęzły z opisami zgodnymi z treścią z Canva (koszty, self check-in, skalowanie, klucze, bezpieczeństwo, konkurencyjność; fazy 1–24 mies.; zamek, gateway, aplikacja, algorytm; budżet/czas/zespół/partner/zaplecze; ryzyka; zakres prac).
 
 Dane: `public/data/beesecure-mindmap-data.js`.  
-Logo (lockup z Canvy): `public/assets/beesecure-logo-canva.png`.
+Logo (lockup z Canvy): `public/assets/beesecure-logo-canva.png`.  
+Wspólne menu z logo i linkami (Mind map · WBS · Diagram · Eksport): `public/site-chrome.css`.
 
 ### Układ dwukolumnowy
 
@@ -26,8 +27,8 @@ npm run dev
 ```
 
 - **Mapa:** http://localhost:5173/  
-- **WBS i harmonogram (Gantt):** http://localhost:5173/wbs.html  
-- **Diagram blokowy architektury:** http://localhost:5173/diagram.html  
+- **WBS / harmonogram / diagram blokowy (dwie zakładki + ustawienia):** http://localhost:5173/wbs.html — *Harmonogram & WBS lista* oraz *Diagram blokowy WBS*; link w pasku do pełnego diagramu.  
+- **Diagram blokowy WBS (pełna szerokość, jak `beesecure_wbs_diagram_1.html`):** http://localhost:5173/diagram.html  
 - **Eksport graficzny (Canva / PDF):** http://localhost:5173/export.html  
 
 Edycje węzłów domyślnie w **localStorage** (`beesecure_node_edits`). Opcjonalnie API zapisujące do pliku:

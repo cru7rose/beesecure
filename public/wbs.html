@@ -4,129 +4,156 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="./assets/beesecure-logo-canva.png" />
-<title>BeeSecure – WBS &amp; Harmonogram</title>
+<title>BeeSecure – WBS, harmonogram i diagram</title>
+<link rel="stylesheet" href="./site-chrome.css" />
 <link rel="stylesheet" href="./wbs.css" />
 </head>
 <body>
-
-<nav class="wbs-site-nav" aria-label="Nawigacja projektu">
-  <a href="./index.html">Mind map</a>
-  <span class="current" aria-current="page">WBS &amp; harmonogram</span>
-  <a href="./diagram.html">Diagram blokowy</a>
-</nav>
-
-<div class="header">
-  <div style="width:44px;height:44px;flex-shrink:0;background:var(--gold);clip-path:polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);display:flex;align-items:center;justify-content:center;font-size:18px;">🔑</div>
-  <div class="header-text">
-    <h1>BeeSecure – KeyLock</h1>
-    <p>Work Breakdown Structure &amp; Harmonogram projektu</p>
-  </div>
-  <div class="header-stats">
-    <div class="stat"><div class="stat-val" id="stat-done">0%</div><div class="stat-lbl">Ukończono</div></div>
-    <div class="stat"><div class="stat-val" id="stat-month">M0</div><div class="stat-lbl">Bieżący miesiąc</div></div>
-    <div class="stat"><div class="stat-val" id="stat-phase">Faza 1</div><div class="stat-lbl">Aktywna faza</div></div>
-    <div class="stat"><div class="stat-val" id="stat-budget">1,50 mln zł</div><div class="stat-lbl">Budżet</div></div>
-    <div class="stat"><div class="stat-val" id="stat-team">25</div><div class="stat-lbl">Osób w zespole</div></div>
-    <button class="settings-btn" onclick="openSettings()"><span>⚙</span> Ustawienia</button>
-  </div>
-</div>
-
-<div class="time-control">
-  <label>Czas projektu:</label>
-  <input type="range" min="0" max="24" value="0" id="timeSlider" oninput="updateTime(this.value)">
-  <div class="time-badge" id="timeBadge">Start</div>
-  <div class="phase-badge" id="phaseBadge" style="border-color:#3B8BD4;color:#3B8BD4;">▶ F1</div>
-</div>
-
-<div class="settings-overlay" id="settingsOverlay" onclick="handleOverlayClick(event)">
-  <div class="settings-drawer">
-    <div class="settings-header">
-      <h2>⚙ Parametry projektu</h2>
-      <button class="settings-close" onclick="closeSettings()">✕</button>
+<header class="site-chrome" role="banner">
+  <a href="./index.html" class="site-chrome-brand" aria-label="BeeSecure – strona główna projektu">
+    <img class="site-chrome-logo" src="./assets/beesecure-logo-canva.png" alt="BeeSecure" width="220" height="72" />
+  </a>
+  <nav class="site-chrome-nav" aria-label="Nawigacja projektu">
+    <a class="site-chrome-link" href="./index.html">Mind map</a>
+    <span class="site-chrome-current" aria-current="page">WBS i harmonogram</span>
+    <a class="site-chrome-link" href="./diagram.html">Diagram WBS</a>
+    <a class="site-chrome-link" href="./export.html">Eksport graficzny</a>
+  </nav>
+</header>
+<div class="wbs-shell">
+  <!-- ══ TOP NAV ══ -->
+  <div class="top-nav">
+    <div class="nav-tab active" id="tab-gantt" onclick="switchTab('gantt')">📊 Harmonogram &amp; WBS lista</div>
+    <div class="nav-tab" id="tab-tree" onclick="switchTab('tree')">🌳 Diagram blokowy WBS</div>
+    <div class="nav-spacer"></div>
+    <div class="nav-stats">
+      <div class="nstat"><div class="nstat-val" id="stat-done">0%</div><div class="nstat-lbl">Ukończono</div></div>
+      <div class="nstat"><div class="nstat-val" id="stat-budget">1,50 mln zł</div><div class="nstat-lbl">Budżet</div></div>
+      <div class="nstat"><div class="nstat-val" id="stat-team">25</div><div class="nstat-lbl">Osób</div></div>
+      <button class="settings-btn" onclick="openSettings()">⚙ Ustawienia</button>
     </div>
-    <div class="settings-section">
-      <div class="settings-section-title">Finansowe</div>
-      <div class="field">
-        <label>Budżet całkowity</label>
-        <div class="field-row">
-          <input type="number" id="inp-budget" value="1500000" min="100000" max="50000000" step="50000">
-          <span class="field-unit">zł</span>
+  </div>
+  
+  <!-- ══ SETTINGS OVERLAY ══ -->
+  <div class="s-overlay" id="sOverlay" onclick="handleOverlayClick(event)">
+    <div class="s-drawer">
+      <div class="s-hdr"><h2>⚙ Parametry projektu</h2><button class="s-close" onclick="closeSettings()">✕</button></div>
+      <div class="s-sec">
+        <div class="s-sec-title">Finansowe</div>
+        <div class="f"><label>Budżet całkowity</label><div class="f-row"><input type="number" id="inp-budget" value="1500000" min="100000" max="50000000" step="50000"><span class="f-unit">zł</span></div><div class="b-disp">≈ <span id="budget-mln">1,50 mln zł</span></div></div>
+        <div class="f"><label>Rezerwa budżetowa</label><div class="f-row"><input type="number" id="inp-reserve" value="10" min="0" max="50" step="5"><span class="f-unit">%</span></div></div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-title">Harmonogram – czas trwania faz</div>
+        <div class="f"><label>Faza 1 – Projektowanie</label><div class="f-row"><input type="number" id="inp-f1" value="6" min="2" max="12"><span class="f-unit">mies.</span></div></div>
+        <div class="f"><label>Faza 2 – Testy & Certyfikacja</label><div class="f-row"><input type="number" id="inp-f2" value="8" min="2" max="18"><span class="f-unit">mies.</span></div></div>
+        <div class="f"><label>Faza 3 – Wdrożenie pilotażowe</label><div class="f-row"><input type="number" id="inp-f3" value="6" min="1" max="12"><span class="f-unit">mies.</span></div></div>
+        <div class="f"><label>Faza 4 – Pełne wdrożenie</label><div class="f-row"><input type="number" id="inp-f4" value="4" min="1" max="12"><span class="f-unit">mies.</span></div></div>
+        <div class="b-disp">Łączny czas: <span id="total-months-preview">24 miesięcy</span></div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-title">Zespół</div>
+        <div class="f"><label>Programiści</label><div class="f-row"><input type="number" id="inp-dev" value="5" min="1" max="30"><span class="f-unit">osób</span></div></div>
+        <div class="f"><label>Inżynierowie hardware</label><div class="f-row"><input type="number" id="inp-eng" value="10" min="1" max="30"><span class="f-unit">osób</span></div></div>
+        <div class="f"><label>Marketing & Zarządzanie</label><div class="f-row"><input type="number" id="inp-mgmt" value="10" min="1" max="20"><span class="f-unit">osób</span></div></div>
+        <div class="b-disp">Łącznie: <span id="total-team-preview">25 osób</span></div>
+      </div>
+      <div class="s-sec">
+        <div class="s-sec-title">Podgląd kosztów</div>
+        <div style="font-size:10px;line-height:2.2;color:var(--text-muted)">
+          <div style="display:flex;justify-content:space-between"><span>Budżet operacyjny:</span><span id="cost-op" style="color:var(--text)">1 350 000 zł</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Rezerwa:</span><span id="cost-res" style="color:var(--gold-light)">150 000 zł</span></div>
+          <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:4px;margin-top:3px"><span>Koszt/os./mies.:</span><span id="cost-per-person" style="color:var(--gold-light)">2 500 zł</span></div>
         </div>
-        <div class="budget-display">≈ <span id="budget-mln">1,50 mln zł</span></div>
       </div>
-      <div class="field">
-        <label>Rezerwa budżetowa</label>
-        <div class="field-row">
-          <input type="number" id="inp-reserve" value="10" min="0" max="50" step="5">
-          <span class="field-unit">%</span>
+      <div style="padding:12px 14px">
+        <button class="apply-btn" onclick="applySettings()">✓ Zastosuj zmiany</button>
+        <button class="reset-btn" onclick="resetSettings()">↺ Przywróć wartości domyślne</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ══ PAGE 1: HARMONOGRAM ══ -->
+  <div class="page active" id="page-gantt">
+    <div class="time-bar">
+      <label>Miesiąc projektu:</label>
+      <input type="range" min="0" max="24" value="0" id="timeSlider" oninput="updateTime(this.value)">
+      <div class="time-badge" id="timeBadge">Start</div>
+      <div class="phase-badge" id="phaseBadge" style="border-color:var(--blue);color:var(--blue)">▶ F1</div>
+      <div class="tb-stat"><div class="tb-stat-val" id="stat-month">M0</div><div class="tb-stat-lbl">Miesiąc</div></div>
+      <div class="tb-stat"><div class="tb-stat-val" id="stat-phase">Faza 1</div><div class="tb-stat-lbl">Faza</div></div>
+    </div>
+    <div class="main">
+      <div class="wbs-panel">
+        <div class="wbs-title">Struktura WBS</div>
+        <div id="wbsTree"></div>
+      </div>
+      <div class="gantt-panel" id="ganttPanel"></div>
+      <div class="detail-panel">
+        <h3>BeeSecure – KeyLock</h3>
+        <p>System IoT kontroli dostępu dla najmu krótkoterminowego.</p>
+        <div class="ring-wrap"><svg width="86" height="86" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+          <circle id="ringArc" cx="50" cy="50" r="38" fill="none" stroke="var(--gold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 239" transform="rotate(-90 50 50)"/>
+          <text x="50" y="46" text-anchor="middle" font-size="16" fill="var(--gold-light)" id="ringPct">0%</text>
+          <text x="50" y="60" text-anchor="middle" font-size="9" fill="var(--text-muted)">ukończono</text>
+        </svg></div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;margin-bottom:8px">
+          <div style="font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Parametry</div>
+          <div style="font-size:10px;line-height:2">
+            <span style="color:var(--text-muted)">Budżet:</span> <span style="color:var(--gold-light)" id="detail-budget">1,50 mln zł</span><br>
+            <span style="color:var(--text-muted)">Czas:</span> <span id="detail-time">24 miesięcy</span><br>
+            <span style="color:var(--text-muted)">Zespół:</span> <span id="detail-team">~25 osób</span><br>
+            <span style="color:var(--text-muted)">Partner:</span> <span>EasyRentals</span>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px">
+          <div style="font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Tech</div>
+          <span class="detail-tag">ZigBee</span><span class="detail-tag">IoT</span><span class="detail-tag">PCB</span><span class="detail-tag">Web App</span><span class="detail-tag">Seed Algo</span>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:8px">
+          <div style="font-size:8px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Aktywna faza</div>
+          <p id="phaseDesc" style="font-size:10px;color:var(--text-muted);line-height:1.6"></p>
         </div>
       </div>
     </div>
-    <div class="settings-section">
-      <div class="settings-section-title">Harmonogram – czas trwania faz</div>
-      <div class="field"><label>Faza 1 – Projektowanie</label><div class="field-row"><input type="number" id="inp-f1" value="6" min="2" max="12"><span class="field-unit">mies.</span></div></div>
-      <div class="field"><label>Faza 2 – Testy &amp; Certyfikacja</label><div class="field-row"><input type="number" id="inp-f2" value="8" min="2" max="18"><span class="field-unit">mies.</span></div></div>
-      <div class="field"><label>Faza 3 – Wdrożenie pilotażowe</label><div class="field-row"><input type="number" id="inp-f3" value="6" min="1" max="12"><span class="field-unit">mies.</span></div></div>
-      <div class="field"><label>Faza 4 – Pełne wdrożenie</label><div class="field-row"><input type="number" id="inp-f4" value="4" min="1" max="12"><span class="field-unit">mies.</span></div></div>
-      <div class="budget-display">Łączny czas: <span id="total-months-preview">24 miesięcy</span></div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-section-title">Zespół</div>
-      <div class="field"><label>Programiści</label><div class="field-row"><input type="number" id="inp-dev" value="5" min="1" max="30"><span class="field-unit">osób</span></div></div>
-      <div class="field"><label>Inżynierowie hardware</label><div class="field-row"><input type="number" id="inp-eng" value="10" min="1" max="30"><span class="field-unit">osób</span></div></div>
-      <div class="field"><label>Marketing &amp; Zarządzanie</label><div class="field-row"><input type="number" id="inp-mgmt" value="10" min="1" max="20"><span class="field-unit">osób</span></div></div>
-      <div class="budget-display">Łącznie: <span id="total-team-preview">25 osób</span></div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-section-title">Podgląd kosztów</div>
-      <div style="font-size:12px;line-height:2.2;color:var(--text-muted)">
-        <div style="display:flex;justify-content:space-between"><span>Budżet operacyjny:</span><span id="cost-op" style="color:var(--text)">1 350 000 zł</span></div>
-        <div style="display:flex;justify-content:space-between"><span>Rezerwa:</span><span id="cost-res" style="color:var(--gold-light)">150 000 zł</span></div>
-        <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:6px;margin-top:4px"><span>Koszt/os./mies.:</span><span id="cost-per-person" style="color:var(--gold-light)">2 500 zł</span></div>
+  </div>
+  
+  <!-- ══ PAGE 2: BLOCK DIAGRAM ══ -->
+  <div class="page" id="page-tree">
+    <div class="tree-page">
+      <div class="tree-header">
+        <div>
+          <div style="font-size:8px;color:var(--gold);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:3px">Work Breakdown Structure</div>
+          <h2>BeeSecure – KeyLock</h2>
+          <p>Hierarchiczna dekompozycja zakresu projektu • 7 obszarów • 37 pakietów prac</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--text-muted)">Postęp przy suwaku</div>
+          <div style="font-size:16px;color:var(--gold-light)" id="tree-prog">M0 – 0%</div>
+        </div>
       </div>
-    </div>
-    <div style="padding:16px 20px">
-      <button class="apply-btn" onclick="applySettings()">✓ Zastosuj zmiany</button>
-      <button class="reset-btn" onclick="resetSettings()">↺ Przywróć wartości domyślne</button>
-    </div>
-  </div>
-</div>
-
-<div class="main">
-  <div class="wbs-panel">
-    <div class="wbs-title">Struktura WBS</div>
-    <div id="wbsTree"></div>
-  </div>
-  <div class="gantt-panel" id="ganttPanel"></div>
-  <div class="detail-panel">
-    <h3>BeeSecure – KeyLock</h3>
-    <p>Inteligentny system kontroli dostępu dla rynku najmu krótkoterminowego oparty na technologii ZigBee i kodach rotacyjnych.</p>
-    <div class="progress-ring-wrap"><svg width="100" height="100" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
-      <circle id="ringArc" cx="50" cy="50" r="38" fill="none" stroke="var(--gold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="0 239" transform="rotate(-90 50 50)"/>
-      <text x="50" y="46" text-anchor="middle" font-size="16" fill="var(--gold-light)" id="ringPct">0%</text>
-      <text x="50" y="60" text-anchor="middle" font-size="9" fill="var(--text-muted)">ukończono</text>
-    </svg></div>
-    <div style="border-top:1px solid var(--border);padding-top:12px;margin-bottom:12px">
-      <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Parametry projektu</div>
-      <div style="font-size:12px;line-height:2">
-        <span style="color:var(--text-muted)">Budżet:</span> <span style="color:var(--gold-light)" id="detail-budget">1,50 mln zł</span><br>
-        <span style="color:var(--text-muted)">Czas:</span> <span id="detail-time">24 miesięcy</span><br>
-        <span style="color:var(--text-muted)">Zespół:</span> <span id="detail-team">~25 osób</span><br>
-        <span style="color:var(--text-muted)">Partner:</span> <span>EasyRentals</span>
+      <div class="legend">
+        <div class="legend-item"><div class="ld" style="background:#3B8BD4"></div>1. Zamek</div>
+        <div class="legend-item"><div class="ld" style="background:#1D9E75"></div>2. Gateway</div>
+        <div class="legend-item"><div class="ld" style="background:#D4A017"></div>3. Aplikacja webowa</div>
+        <div class="legend-item"><div class="ld" style="background:#D85A30"></div>4. Algorytm kluczy</div>
+        <div class="legend-item"><div class="ld" style="background:#9B59B6"></div>5. Testy</div>
+        <div class="legend-item"><div class="ld" style="background:#E74C3C"></div>6. Wdrożenie</div>
+        <div class="legend-item"><div class="ld" style="background:#888070"></div>7. Zarządzanie</div>
+        <div style="margin-left:auto;display:flex;gap:10px">
+          <div class="legend-item"><div class="ld" style="background:#4ecda0"></div>✓ Gotowe</div>
+          <div class="legend-item"><div class="ld" style="background:var(--gold)"></div>W toku</div>
+          <div class="legend-item"><div class="ld" style="background:rgba(255,255,255,0.1)"></div>Oczekuje</div>
+        </div>
       </div>
-    </div>
-    <div style="border-top:1px solid var(--border);padding-top:12px">
-      <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Technologie</div>
-      <span class="detail-tag">ZigBee</span><span class="detail-tag">IoT</span><span class="detail-tag">PCB Design</span><span class="detail-tag">Web App</span><span class="detail-tag">Algorytm Seed</span>
-    </div>
-    <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
-      <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Aktywna faza</div>
-      <p id="phaseDesc" style="font-size:12px;color:var(--text-muted);line-height:1.6"></p>
+      <div id="blockTree"></div>
     </div>
   </div>
+  
+  <!-- Tooltip -->
+  <div class="tip" id="tip"></div>
 </div>
-
 <script type="module" src="./wbs-app.js"></script>
 </body>
 </html>

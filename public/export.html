@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./site-chrome.css" />
   <style>
     :root {
       --bg: #0f1419;
@@ -19,32 +20,62 @@
       --zakres: #f59e0b;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: 'Outfit', sans-serif; background: var(--bg); min-height: 100vh; }
-    .header { padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
-    .logo { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; color: #e6edf3; }
-    .logo-img { height: 56px; width: auto; max-width: min(220px, 45vw); object-fit: contain; display: block; }
-    .logo-export-note { color: #8b949e; font-size: 0.85rem; }
-    .legend { display: flex; gap: 1rem; color: #8b949e; font-size: 0.85rem; flex-wrap: wrap; }
-    .legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
-    .legend i { width: 10px; height: 10px; border-radius: 50%; }
-    #cy { width: 100%; height: calc(100vh - 70px); }
+    body {
+      margin: 0;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .export-legend-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.5rem 1.5rem;
+      color: #8b949e;
+      font-size: 0.85rem;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+    .export-legend-bar span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .export-legend-bar i {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    #cy {
+      flex: 1;
+      min-height: 200px;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div class="logo">
-      <img class="logo-img" src="./assets/beesecure-logo-canva.png" alt="BeeSecure – inteligentna kontrola dostępu" width="180" height="56" />
-      <span class="logo-export-note">eksport · Canva / PDF</span>
-    </div>
-    <div class="legend">
-      <span><i style="background:var(--warunki)"></i> Warunki</span>
-      <span><i style="background:var(--harmonogram)"></i> Harmonogram</span>
-      <span><i style="background:var(--produkty)"></i> Produkty</span>
-      <span><i style="background:var(--zasoby)"></i> Zasoby</span>
-      <span><i style="background:var(--zagrozenia)"></i> Zagrożenia</span>
-      <span><i style="background:var(--zakres)"></i> Zakres</span>
-    </div>
+  <header class="site-chrome" role="banner">
+    <a href="./index.html" class="site-chrome-brand" aria-label="BeeSecure – strona główna projektu">
+      <img class="site-chrome-logo" src="./assets/beesecure-logo-canva.png" alt="BeeSecure" width="220" height="72" />
+    </a>
+    <nav class="site-chrome-nav" aria-label="Nawigacja projektu">
+      <a class="site-chrome-link" href="./index.html">Mind map</a>
+      <a class="site-chrome-link" href="./wbs.html">WBS i harmonogram</a>
+      <a class="site-chrome-link" href="./diagram.html">Diagram WBS</a>
+      <span class="site-chrome-current" aria-current="page">Eksport graficzny</span>
+    </nav>
   </header>
+  <div class="export-legend-bar" aria-label="Legenda gałęzi mapy">
+    <span><i style="background:var(--warunki)"></i> Warunki</span>
+    <span><i style="background:var(--harmonogram)"></i> Harmonogram</span>
+    <span><i style="background:var(--produkty)"></i> Produkty</span>
+    <span><i style="background:var(--zasoby)"></i> Zasoby</span>
+    <span><i style="background:var(--zagrozenia)"></i> Zagrożenia</span>
+    <span><i style="background:var(--zakres)"></i> Zakres</span>
+  </div>
   <div id="cy"></div>
   <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
   <script type="module" src="./export-render.js"></script>

@@ -9,26 +9,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./site-chrome.css" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="logo">
+  <header class="site-chrome" role="banner">
+    <a href="./index.html" class="site-chrome-brand" aria-label="BeeSecure – strona główna projektu">
       <img
-        class="logo-img logo-img--canva"
+        class="site-chrome-logo"
         src="./assets/beesecure-logo-canva.png"
-        alt="BeeSecure – inteligentna kontrola dostępu"
+        alt="BeeSecure"
         width="220"
         height="72"
       />
-      <p class="logo-map-context">Lewo: materiał referencyjny (Canva) · Prawo: mapa interaktywna z klientem</p>
-    </div>
-    <nav class="site-nav" aria-label="Nawigacja projektu">
-      <span class="site-nav-current" aria-current="page">Mind map</span>
-      <a href="./wbs.html">WBS &amp; harmonogram</a>
-      <a href="./diagram.html">Diagram blokowy</a>
+    </a>
+    <nav class="site-chrome-nav" aria-label="Nawigacja projektu">
+      <span class="site-chrome-current" aria-current="page">Mind map</span>
+      <a class="site-chrome-link" href="./wbs.html">WBS i harmonogram</a>
+      <a class="site-chrome-link" href="./diagram.html">Diagram WBS</a>
+      <a class="site-chrome-link" href="./export.html">Eksport graficzny</a>
     </nav>
   </header>
+  <p class="site-chrome-context">Lewo: materiał referencyjny (Canva) · Prawo: mapa interaktywna z klientem</p>
 
   <main class="main split-main">
     <section class="canva-panel" aria-label="Widok referencyjny zgodny z Canvą">

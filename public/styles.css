@@ -25,48 +25,7 @@ body {
   flex-direction: column;
 }
 
-.header {
-  padding: 0.75rem 1.5rem;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.site-nav {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.site-nav a {
-  font-size: 0.78rem;
-  color: var(--muted);
-  text-decoration: none;
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  letter-spacing: 0.02em;
-}
-
-.site-nav a:hover {
-  color: var(--gold-light);
-  border-color: var(--gold);
-}
-
-.site-nav-current {
-  font-size: 0.78rem;
-  color: var(--gold-light);
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
-  border: 1px solid var(--gold);
-  pointer-events: none;
-}
-
+/* Logo w nagłówku zastąpione przez site-chrome.css (wszystkie podstrony). */
 .logo {
   display: flex;
   align-items: center;
@@ -82,21 +41,11 @@ body {
   line-height: 1;
 }
 
-/* Pełny lockup z Canvy (ikona + BEESECURE + tagline na czerni) */
 .logo-img--canva {
   height: clamp(52px, 9vw, 76px);
   width: auto;
   max-width: min(300px, 85vw);
   object-fit: contain;
-}
-
-.logo-map-context {
-  margin: 0;
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: var(--muted);
-  letter-spacing: 0.02em;
-  max-width: 14rem;
 }
 
 .logo-text {
