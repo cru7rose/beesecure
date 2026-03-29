@@ -28,6 +28,8 @@ export const DEFAULT_PHASES = [
 export const DEFAULT_WBS = [
   { code: '1', name: 'Zamek Elektroniczny', level: 1, start: 0, end: 8, phase: 1 },
   { code: '1.1', name: 'Projekt PCB i elektroniki', level: 2, start: 0, end: 4, phase: 1 },
+  { code: '1.1.1', name: 'Schemat i BOM', level: 3, start: 0, end: 2, phase: 1 },
+  { code: '1.1.2', name: 'Weryfikacja EMC', level: 3, start: 2, end: 4, phase: 1 },
   { code: '1.2', name: 'Moduł ZigBee', level: 2, start: 1, end: 5, phase: 1 },
   { code: '1.3', name: 'Pinpad i interfejs', level: 2, start: 2, end: 6, phase: 1 },
   { code: '1.4', name: 'Zasilanie i klucz awaryjny', level: 2, start: 3, end: 7, phase: 1 },
@@ -39,6 +41,8 @@ export const DEFAULT_WBS = [
   { code: '2.4', name: 'Integracja z siecią domową', level: 2, start: 3, end: 7, phase: 1 },
   { code: '3', name: 'Aplikacja Webowa', level: 1, start: 2, end: 16, phase: 1 },
   { code: '3.1', name: 'Architektura i backend', level: 2, start: 2, end: 8, phase: 1 },
+  { code: '3.1.1', name: 'API i baza danych', level: 3, start: 2, end: 5, phase: 1 },
+  { code: '3.1.2', name: 'Uwierzytelnianie', level: 3, start: 4, end: 8, phase: 1 },
   { code: '3.2', name: 'Panel zarządzania dostępem', level: 2, start: 5, end: 12, phase: 2 },
   { code: '3.3', name: 'Moduł serwisantów', level: 2, start: 7, end: 13, phase: 2 },
   { code: '3.4', name: 'Zdalne administrowanie', level: 2, start: 8, end: 14, phase: 2 },
@@ -51,6 +55,8 @@ export const DEFAULT_WBS = [
   { code: '4.5', name: 'Autoryzacja lokalna (offline)', level: 2, start: 7, end: 11, phase: 2 },
   { code: '5', name: 'Testy i Certyfikacja', level: 1, start: 6, end: 14, phase: 2 },
   { code: '5.1', name: 'Testy jednostkowe i integracyjne', level: 2, start: 6, end: 10, phase: 2 },
+  { code: '5.1.1', name: 'Testy modułowe', level: 3, start: 6, end: 8, phase: 2 },
+  { code: '5.1.2', name: 'Testy E2E', level: 3, start: 7, end: 10, phase: 2 },
   { code: '5.2', name: 'Testy bezpieczeństwa', level: 2, start: 8, end: 12, phase: 2 },
   { code: '5.3', name: 'Certyfikacja ZigBee', level: 2, start: 9, end: 13, phase: 2 },
   { code: '5.4', name: 'Certyfikacja norm', level: 2, start: 10, end: 14, phase: 2 },
@@ -82,6 +88,46 @@ function createFreshState() {
     project: { ...DEFAULT_PROJECT },
     baseline: deepClone(DEFAULT_WBS).map((i) => ({ start: i.start, end: i.end })),
   };
+}
+
+/** Porządkuje kody 1 < 1.2 < 1.10 < 1.2.1 */
+export function compareWbsCode(a, b) {
+  const pa = String(a).split('.').map((x) => parseInt(x, 10) || 0);
+  const pb = String(b).split('.').map((x) => parseInt(x, 10) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const da = pa[i] ?? -1;
+    const db = pb[i] ?? -1;
+    if (da !== db) return da - db;
+  }
+  return 0;
+}
+
+function escapeCodeRe(code) {
+  return String(code).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Dzieci bezpośrednie: L1→L2 lub L2→L3 */
+export function getDirectChildCodes(wbs, parentCode) {
+  const parent = wbs.find((x) => x.code === parentCode);
+  if (!parent) return [];
+  const re =
+    parent.level === 1
+      ? new RegExp(`^${escapeCodeRe(parentCode)}\\.\\d+$`)
+      : parent.level === 2
+        ? new RegExp(`^${escapeCodeRe(parentCode)}\\.\\d+$`)
+        : null;
+  if (!re) return [];
+  const wantLevel = parent.level + 1;
+  return wbs.filter((x) => x.level === wantLevel && re.test(x.code));
+}
+
+export function normalizeWbsOrder() {
+  if (!state) initWbsState();
+  const pairs = state.wbs.map((item, i) => ({ item, bl: state.baseline[i] }));
+  pairs.sort((x, y) => compareWbsCode(x.item.code, y.item.code));
+  state.wbs = pairs.map((p) => p.item);
+  state.baseline = pairs.map((p) => p.bl);
 }
 
 function validateLoaded(s) {
@@ -203,6 +249,7 @@ export function addWorkPackageL1(name) {
     phase: 1,
   });
   state.baseline.push({ start: 0, end: blEnd });
+  normalizeWbsOrder();
   rescaleWbsToProjectTimeline();
   saveState();
   return ncode;
@@ -214,18 +261,18 @@ export function addWorkPackageL2(parentCode, name) {
   const parent = w.find((x) => x.code === parentCode && x.level === 1);
   if (!parent) return null;
   const T = totalMonths();
-  const kids = w.filter((x) => x.level === 2 && x.code.startsWith(`${parentCode}.`));
+  const kids = getDirectChildCodes(w, parentCode);
   const sub =
     kids.reduce((m, k) => {
-      const p = parseInt(k.code.split('.')[1], 10);
-      return Number.isFinite(p) ? Math.max(m, p) : m;
+      const tail = parseInt(k.code.split('.').pop(), 10);
+      return Number.isFinite(tail) ? Math.max(m, tail) : m;
     }, 0) + 1;
   const ncode = `${parentCode}.${sub}`;
   const span = Math.max(2, Math.min(6, parent.end - parent.start));
   let start = parent.start;
   let end = Math.min(T, parent.start + span);
   if (kids.length) {
-    const last = kids.reduce((a, b) => (a.code > b.code ? a : b));
+    const last = kids.reduce((a, b) => (compareWbsCode(a.code, b.code) > 0 ? a : b));
     start = Math.min(Math.max(last.start, parent.start), parent.end - 1);
     end = Math.min(T, start + Math.max(1, Math.min(span, parent.end - start)));
   }
@@ -242,6 +289,48 @@ export function addWorkPackageL2(parentCode, name) {
     start: (start / T) * BASELINE_MONTHS,
     end: (end / T) * BASELINE_MONTHS,
   });
+  normalizeWbsOrder();
+  rescaleWbsToProjectTimeline();
+  saveState();
+  return ncode;
+}
+
+/** Pod-podpakiet (L3) pod wybranym pakietem L2 */
+export function addWorkPackageL3(parentL2Code, name) {
+  initWbsState();
+  const w = state.wbs;
+  const parent = w.find((x) => x.code === parentL2Code && x.level === 2);
+  if (!parent) return null;
+  const T = totalMonths();
+  const kids = getDirectChildCodes(w, parentL2Code);
+  const sub =
+    kids.reduce((m, k) => {
+      const tail = parseInt(k.code.split('.').pop(), 10);
+      return Number.isFinite(tail) ? Math.max(m, tail) : m;
+    }, 0) + 1;
+  const ncode = `${parentL2Code}.${sub}`;
+  const span = Math.max(1, Math.min(4, parent.end - parent.start));
+  let start = parent.start;
+  let end = Math.min(T, parent.start + Math.max(1, Math.min(span, parent.end - parent.start)));
+  if (kids.length) {
+    const last = kids.reduce((a, b) => (compareWbsCode(a.code, b.code) > 0 ? a : b));
+    start = Math.min(Math.max(last.start, parent.start), parent.end - 1);
+    end = Math.min(T, start + Math.max(1, Math.min(span, parent.end - start)));
+  }
+  if (end <= start) end = Math.min(T, start + 1);
+  w.push({
+    code: ncode,
+    name: (name || `Zadanie ${ncode}`).trim(),
+    level: 3,
+    start,
+    end,
+    phase: parent.phase,
+  });
+  state.baseline.push({
+    start: (start / T) * BASELINE_MONTHS,
+    end: (end / T) * BASELINE_MONTHS,
+  });
+  normalizeWbsOrder();
   rescaleWbsToProjectTimeline();
   saveState();
   return ncode;
@@ -251,9 +340,15 @@ export function removeWorkPackage(code) {
   initWbsState();
   const w = state.wbs;
   const idx = [];
-  if (!code.includes('.')) {
+  const dots = (code.match(/\./g) || []).length;
+  if (dots === 0) {
     w.forEach((item, i) => {
-      if (item.code === code || (item.level === 2 && item.code.startsWith(`${code}.`))) idx.push(i);
+      if (item.code === code || item.code.startsWith(`${code}.`)) idx.push(i);
+    });
+  } else if (dots === 1) {
+    const prefix = `${code}.`;
+    w.forEach((item, i) => {
+      if (item.code === code || item.code.startsWith(prefix)) idx.push(i);
     });
   } else {
     const i = w.findIndex((x) => x.code === code);
@@ -265,6 +360,7 @@ export function removeWorkPackage(code) {
       w.splice(i, 1);
       state.baseline.splice(i, 1);
     });
+  normalizeWbsOrder();
   rescaleWbsToProjectTimeline();
   saveState();
 }

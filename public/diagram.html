@@ -38,39 +38,45 @@
 <!-- ══ MAIN ══ -->
 <div class="main">
   <section class="diagram-editor" aria-label="Edycja struktury WBS">
-    <div class="diagram-editor-title">Kreator WBS</div>
-    <div class="diagram-editor-row">
-      <label class="diagram-editor-field">
-        <span>Nowy obszar (L1)</span>
-        <input type="text" id="wpNewL1Name" placeholder="np. Integracja z ERP" maxlength="80" />
-      </label>
-      <button type="button" class="diagram-editor-btn" onclick="editorAddL1()">+ Obszar L1</button>
+    <div class="diagram-editor-title">Kreator WBS — trzy kroki</div>
+    <div class="diagram-editor-layout">
+      <div class="diagram-editor-col">
+        <div class="diagram-editor-card-h"><span class="step-num">1</span> Wybór</div>
+        <p class="diagram-editor-lead">Zaznacz pakiet na diagramie — albo wpisz jego <strong>kod</strong> (np. <code>2</code>, <code>3.1</code>, <code>3.1.2</code>).</p>
+        <label class="diagram-editor-field diagram-editor-field--full">
+          <span>Kod pakietu</span>
+          <input type="text" id="wpPickedLabel" placeholder="np. 3.1.2" maxlength="24" autocomplete="off" oninput="editorSyncPickInput()" />
+        </label>
+        <div id="editorSelectionDisplay" class="editor-selection-display is-empty" role="status"></div>
+      </div>
+      <div class="diagram-editor-col">
+        <div class="diagram-editor-card-h"><span class="step-num">2</span> Dodawanie</div>
+        <p class="diagram-editor-lead">Jedno pole <strong>Nazwa</strong> obsługuje wszystkie przyciski. <em>Podpakiet (L2)</em> włącza się tylko przy wybranym <strong>obszarze (L1)</strong>. <em>L3</em> — przy wybranym <strong>L2</strong>.</p>
+        <label class="diagram-editor-field diagram-editor-field--full">
+          <span>Nazwa nowego elementu</span>
+          <input type="text" id="wpNewName" placeholder="Wpisz nazwę…" maxlength="80" />
+        </label>
+        <div class="editor-btn-stack">
+          <button type="button" id="btnAddL1" class="diagram-editor-btn diagram-editor-btn--block" onclick="editorAddL1()">+ Nowy obszar (L1)</button>
+          <button type="button" id="btnAddL2" class="diagram-editor-btn diagram-editor-btn--block" onclick="editorAddL2()" disabled>+ Podpakiet (L2) pod wybranym obszarem</button>
+          <button type="button" id="btnAddL3" class="diagram-editor-btn diagram-editor-btn--block" onclick="editorAddL3()" disabled>+ Pod-podpakiet (L3) pod wybranym L2</button>
+        </div>
+      </div>
+      <div class="diagram-editor-col">
+        <div class="diagram-editor-card-h"><span class="step-num">3</span> Zmiana / usunięcie</div>
+        <p class="diagram-editor-lead">Dotyczy elementu z kroku 1. Usunięcie obejmuje <strong>wszystkie poziomy podrzędne</strong> (np. L2 znika z całym L3).</p>
+        <label class="diagram-editor-field diagram-editor-field--full">
+          <span>Nowa nazwa</span>
+          <input type="text" id="wpRenameName" placeholder="Wpisz i kliknij „Zmień nazwę”" maxlength="80" />
+        </label>
+        <div class="editor-btn-stack editor-btn-stack--pair">
+          <button type="button" id="btnRename" class="diagram-editor-btn" onclick="editorRename()" disabled>Zmień nazwę</button>
+          <button type="button" id="btnRemove" class="diagram-editor-btn diagram-editor-btn--danger" onclick="editorRemove()" disabled>Usuń z podziałem</button>
+        </div>
+        <button type="button" class="diagram-editor-btn diagram-editor-btn--muted diagram-editor-btn--block diagram-editor-reset" onclick="editorResetWbs()">Przywróć fabryczny WBS</button>
+      </div>
     </div>
-    <div class="diagram-editor-row">
-      <label class="diagram-editor-field">
-        <span>Rodzic (L1)</span>
-        <select id="wpParentSelect" aria-label="Obszar nadrzędny dla podpakietu"></select>
-      </label>
-      <label class="diagram-editor-field">
-        <span>Nowy podpakiet (L2)</span>
-        <input type="text" id="wpNewL2Name" placeholder="np. API REST" maxlength="80" />
-      </label>
-      <button type="button" class="diagram-editor-btn" onclick="editorAddL2()">+ Podpakiet L2</button>
-    </div>
-    <div class="diagram-editor-row">
-      <label class="diagram-editor-field">
-        <span>Wybrany kod (klik w blok lub wpisz)</span>
-        <input type="text" id="wpPickedLabel" placeholder="np. 3 lub 3.2" maxlength="12" autocomplete="off" />
-      </label>
-      <label class="diagram-editor-field">
-        <span>Nowa nazwa (zmiana)</span>
-        <input type="text" id="wpRenameName" placeholder="Nowa nazwa pakietu" maxlength="80" />
-      </label>
-      <button type="button" class="diagram-editor-btn" onclick="editorRename()">Zmień nazwę</button>
-      <button type="button" class="diagram-editor-btn diagram-editor-btn--danger" onclick="editorRemove()">Usuń pakiet</button>
-      <button type="button" class="diagram-editor-btn diagram-editor-btn--muted" onclick="editorResetWbs()">Przywróć domyślny WBS</button>
-    </div>
-    <p class="diagram-editor-hint">Zmiany zapisują się w tej samej pamięci co harmonogram (WBS) — odśwież drugą kartę lub wróć do zakładki harmonogramu, aby zobaczyć efekt.</p>
+    <p class="diagram-editor-hint">Stan jest wspólny z zakładką <a href="./wbs.html">WBS i harmonogram</a> (ta sama pamięć przeglądarki). Dwie otwarte karty zsynchronizują się po zapisie.</p>
   </section>
 
   <div class="diagram-header">

@@ -41,48 +41,110 @@
 
   /* ══ WBS EDITOR ══ */
   .diagram-editor {
-    margin-bottom: 22px; padding: 16px 18px; background: var(--bg2);
+    margin-bottom: 22px; padding: 18px 20px; background: var(--bg2);
     border-radius: 10px; border: 1px solid var(--border);
   }
   .diagram-editor-title {
     font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em;
-    margin-bottom: 12px; font-weight: bold;
+    margin-bottom: 16px; font-weight: bold;
   }
-  .diagram-editor-row {
-    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 14px; margin-bottom: 12px;
+  .diagram-editor-layout {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 22px;
   }
-  .diagram-editor-row:last-of-type { margin-bottom: 0; }
+  @media (max-width: 1100px) {
+    .diagram-editor-layout { grid-template-columns: 1fr; }
+  }
+  .diagram-editor-col {
+    padding: 14px 16px; background: var(--bg3); border-radius: 9px; border: 1px solid rgba(212,160,23,0.12);
+  }
+  .diagram-editor-card-h {
+    font-size: 12px; color: var(--gold-light); font-weight: bold; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: #0A0A08;
+    font-size: 11px; font-weight: bold;
+  }
+  .diagram-editor-lead {
+    font-size: 12px; color: var(--text-muted); line-height: 1.55; margin-bottom: 12px;
+    text-transform: none; letter-spacing: normal;
+  }
+  .diagram-editor-lead code { font-size: 11px; color: var(--gold-light); }
   .diagram-editor-field {
-    display: flex; flex-direction: column; gap: 5px; min-width: 140px; flex: 1 1 160px;
-    font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
+    display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;
+    font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em;
   }
-  .diagram-editor-field input,
-  .diagram-editor-field select {
+  .diagram-editor-field--full { width: 100%; }
+  .diagram-editor-field input {
     font-family: inherit; font-size: 14px; text-transform: none; letter-spacing: normal;
     padding: 8px 11px; border-radius: 7px; border: 1px solid var(--border);
-    background: var(--bg3); color: var(--text); outline: none;
+    background: var(--bg2); color: var(--text); outline: none;
   }
-  .diagram-editor-field select { cursor: pointer; }
+  .diagram-editor-field input:focus { border-color: var(--gold-dark); }
+  .editor-selection-display {
+    min-height: 72px; padding: 12px 14px; border-radius: 8px; border: 1px dashed var(--border);
+    font-size: 13px; color: var(--text); line-height: 1.5;
+  }
+  .editor-selection-display.is-empty {
+    color: var(--text-muted); font-size: 12px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .sel-empty-icon { color: var(--gold); opacity: 0.5; font-size: 18px; line-height: 1; }
+  .editor-selection-display .sel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .editor-selection-display .sel-code {
+    font-family: ui-monospace, monospace; font-size: 13px; color: var(--gold-light); font-weight: bold;
+  }
+  .editor-selection-display .sel-lvl {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+    border: 1px solid var(--border); padding: 2px 8px; border-radius: 999px;
+  }
+  .editor-selection-display .sel-name { font-size: 14px; color: var(--text); }
+  .editor-btn-stack { display: flex; flex-direction: column; gap: 8px; }
+  .editor-btn-stack--pair { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .editor-btn-stack--pair .diagram-editor-btn { flex: 1 1 120px; }
   .diagram-editor-btn {
-    flex-shrink: 0; align-self: flex-end; padding: 9px 14px; border-radius: 8px;
+    padding: 9px 14px; border-radius: 8px;
     border: 1px solid var(--gold-dark); background: linear-gradient(180deg, var(--gold-light), var(--gold));
-    color: #0A0A08; font-weight: bold; font-size: 13px; cursor: pointer; font-family: inherit;
+    color: #0A0A08; font-weight: bold; font-size: 12px; cursor: pointer; font-family: inherit;
   }
-  .diagram-editor-btn:hover { filter: brightness(1.06); }
+  .diagram-editor-btn:disabled {
+    opacity: 0.38; cursor: not-allowed; filter: grayscale(0.3);
+  }
+  .diagram-editor-btn--block { width: 100%; text-align: center; }
+  .diagram-editor-btn:hover:not(:disabled) { filter: brightness(1.06); }
   .diagram-editor-btn--danger {
     border-color: #8b2c2c; background: linear-gradient(180deg, #c94a4a, #a03030); color: #fff;
   }
   .diagram-editor-btn--muted {
-    border-color: var(--border); background: var(--bg3); color: var(--text-muted); font-weight: 600;
+    border-color: var(--border); background: var(--bg2); color: var(--text-muted); font-weight: 600;
   }
+  .diagram-editor-reset { margin-top: 10px; }
   .diagram-editor-hint {
-    margin-top: 14px; font-size: 12px; color: var(--text-muted); line-height: 1.5; text-transform: none; letter-spacing: normal;
+    margin-top: 16px; font-size: 12px; color: var(--text-muted); line-height: 1.5; text-transform: none; letter-spacing: normal;
   }
+  .diagram-editor-hint a { color: var(--gold-light); }
 
   .l1-box.diagram-picked,
-  .l2-box.diagram-picked {
+  .l2-box.diagram-picked,
+  .l3-box.diagram-picked {
     box-shadow: 0 0 0 2px var(--gold-light), 0 6px 20px rgba(0,0,0,0.45);
   }
+
+  .l2-stack { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .l2-stack:last-child { margin-bottom: 0; }
+  .l3-list {
+    width: 100%; display: flex; flex-direction: column; gap: 4px; align-items: stretch;
+    padding-left: 8px; margin-top: 2px; border-left: 2px solid rgba(212,160,23,0.25);
+  }
+  .l3-box {
+    border-radius: 6px; padding: 6px 8px; text-align: left;
+    font-size: 11px; line-height: 1.35; cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s; position: relative; overflow: hidden;
+    border-width: 1px; border-style: solid;
+  }
+  .l3-box:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.35); }
+  .l3-code { font-size: 9px; opacity: 0.55; margin-bottom: 2px; font-family: ui-monospace, monospace; }
+  .l3-box .pbar { height: 3px; border-radius: 0 0 5px 5px; }
 
   /* ══ LEGEND ══ */
   .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 22px; padding: 12px 18px; background: var(--bg2); border-radius: 8px; border: 1px solid var(--border); align-items: center; }
@@ -140,3 +202,4 @@
   .tip { position: fixed; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 12px 16px; font-size: 13px; color: var(--text); pointer-events: none; z-index: 500; max-width: 240px; line-height: 1.7; display: none; box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
   .tip.on { display: block; }
   .tip strong { color: var(--gold-light); display: block; margin-bottom: 4px; font-size: 14px; }
+  .tip .tip-meta { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }

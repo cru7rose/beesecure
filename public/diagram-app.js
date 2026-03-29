@@ -4,20 +4,21 @@ import {
   getPhases,
   getProject,
   reloadStateFromStorage,
-  saveState,
   totalMonths,
   GRP_COLORS,
   addWorkPackageL1,
   addWorkPackageL2,
+  addWorkPackageL3,
   removeWorkPackage,
   renameWorkPackage,
   resetStateToFactory,
   subscribeWbsChanges,
+  getDirectChildCodes,
 } from './data/wbs-shared.js';
 
 initWbsState();
 
-const COL_W = 190;
+const COL_W = 200;
 let currentMonth = 0;
 let pickedCode = null;
 
@@ -58,10 +59,11 @@ function updateMetaLine() {
   const WBS = getWbs();
   const roots = WBS.filter((i) => i.level === 1);
   const l2 = WBS.filter((i) => i.level === 2).length;
+  const l3 = WBS.filter((i) => i.level === 3).length;
   const PROJECT = getProject();
   const el = document.getElementById('diagramMetaLine');
   if (el) {
-    el.textContent = `Hierarchiczna dekompozycja · ${roots.length} obszarów · ${l2} podpakietów · ${totalMonths()} mies. · ${(PROJECT.budget / 1e6).toFixed(2).replace('.', ',')} mln zł`;
+    el.textContent = `Hierarchiczna dekompozycja · ${roots.length} obszarów · ${l2} podpakietów · ${l3} pod-podpakietów · ${totalMonths()} mies. · ${(PROJECT.budget / 1e6).toFixed(2).replace('.', ',')} mln zł`;
   }
 }
 
@@ -89,17 +91,50 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+function updateEditorChrome() {
+  const item = pickedCode ? getWbs().find((x) => x.code === pickedCode) : null;
+  const disp = document.getElementById('editorSelectionDisplay');
+  if (disp) {
+    if (!item) {
+      disp.classList.add('is-empty');
+      disp.innerHTML =
+        '<span class="sel-empty-icon">◇</span> Kliknij blok na diagramie albo wpisz <strong>kod</strong> w polu obok (np. <code>3.1</code>, <code>3.1.2</code>).';
+    } else {
+      disp.classList.remove('is-empty');
+      const lvl =
+        item.level === 1 ? 'Obszar · L1' : item.level === 2 ? 'Podpakiet · L2' : 'Pod-podpakiet · L3';
+      disp.innerHTML = `<div class="sel-head"><span class="sel-code">${escapeHtml(item.code)}</span><span class="sel-lvl">${lvl}</span></div><div class="sel-name">${escapeHtml(item.name)}</div>`;
+    }
+  }
+  const btn2 = document.getElementById('btnAddL2');
+  const btn3 = document.getElementById('btnAddL3');
+  if (btn2) btn2.disabled = !(item && item.level === 1);
+  if (btn3) btn3.disabled = !(item && item.level === 2);
+  const canEdit = !!item;
+  const btnRen = document.getElementById('btnRename');
+  const btnRm = document.getElementById('btnRemove');
+  if (btnRen) btnRen.disabled = !canEdit;
+  if (btnRm) btnRm.disabled = !canEdit;
+}
+
+function pbadgeHtml(st, pct, small) {
+  const sm = small ? ' style="font-size:8px;padding:1px 5px"' : '';
+  if (st === 'done') return `<span class="pbadge pb-done"${sm}>✓</span>`;
+  if (st === 'active') return `<span class="pbadge pb-act"${sm}>${pct}%</span>`;
+  return '';
+}
+
 function render() {
   syncSliderMax();
   updateMetaLine();
   renderLegend();
+  updateEditorChrome();
   const WBS = getWbs();
   const ov = overall(currentMonth);
   document.getElementById('bigProg').textContent = `M${currentMonth} – ${ov}%`;
   document.getElementById('progChip').textContent = ov + '%';
 
   const roots = WBS.filter((i) => i.level === 1);
-  const kids = (code) => WBS.filter((i) => i.level === 2 && i.code.startsWith(code + '.'));
   const n = roots.length;
 
   let h = '<div class="tree-root-wrap">';
@@ -126,7 +161,7 @@ function render() {
     const c = GRP_COLORS[gi % GRP_COLORS.length];
     const rPct = iProg(root, currentMonth);
     const rSt = iStat(root, currentMonth);
-    const cs = kids(root.code);
+    const cs = getDirectChildCodes(WBS, root.code);
     const pickL1 = pickedCode === root.code ? ' diagram-picked' : '';
 
     h += `<div class="l1-col" style="width:${COL_W}px">`;
@@ -136,7 +171,7 @@ function render() {
       onmouseleave="tipHide()" onclick="pickWp('${root.code}')">
       <div class="l1-code">${root.code}</div>
       ${root.name}
-      ${rSt === 'done' ? `<span class="pbadge pb-done">✓ Gotowe</span>` : rSt === 'active' ? `<span class="pbadge pb-act">${rPct}%</span>` : ''}
+      ${pbadgeHtml(rSt, rPct, false)}
       <div class="pbar" style="width:${rPct}%;background:${c}bb"></div>
     </div>`;
 
@@ -147,14 +182,34 @@ function render() {
         const kPct = iProg(k, currentMonth);
         const kSt = iStat(k, currentMonth);
         const pickL2 = pickedCode === k.code ? ' diagram-picked' : '';
+        const l3s = getDirectChildCodes(WBS, k.code);
+        h += `<div class="l2-stack">`;
         h += `<div class="l2-box${pickL2}" style="width:${COL_W - 10}px;background:${c}12;border-color:${c}48;color:${c}d8"
           onmouseenter="tipShow(event,'${k.code}','${k.name.replace(/'/g, "\\'")}',${kPct},'${kSt}')"
           onmouseleave="tipHide()" onclick="pickWp('${k.code}')">
           <div class="l2-code">${k.code}</div>
           ${k.name}
-          ${kSt === 'done' ? `<span class="pbadge pb-done" style="font-size:9px">✓</span>` : kSt === 'active' ? `<span class="pbadge pb-act" style="font-size:9px">${kPct}%</span>` : ''}
+          ${pbadgeHtml(kSt, kPct, true)}
           <div class="pbar" style="width:${kPct}%;background:${c}80"></div>
         </div>`;
+        if (l3s.length) {
+          h += `<div class="l3-list">`;
+          l3s.forEach((z) => {
+            const zPct = iProg(z, currentMonth);
+            const zSt = iStat(z, currentMonth);
+            const pickL3 = pickedCode === z.code ? ' diagram-picked' : '';
+            h += `<div class="l3-box${pickL3}" style="background:${c}0a;border-color:${c}36;color:${c}c8"
+              onmouseenter="tipShow(event,'${z.code}','${z.name.replace(/'/g, "\\'")}',${zPct},'${zSt}')"
+              onmouseleave="tipHide()" onclick="pickWp('${z.code}')">
+              <div class="l3-code">${z.code}</div>
+              ${z.name}
+              ${pbadgeHtml(zSt, zPct, true)}
+              <div class="pbar" style="width:${zPct}%;background:${c}70"></div>
+            </div>`;
+          });
+          h += `</div>`;
+        }
+        h += `</div>`;
       });
       h += `</div>`;
     }
@@ -164,13 +219,6 @@ function render() {
   h += `</div></div>`;
 
   document.getElementById('blockTree').innerHTML = h;
-
-  const sel = document.getElementById('wpParentSelect');
-  if (sel) {
-    const v = sel.value;
-    sel.innerHTML = roots.map((r) => `<option value="${r.code}">${r.code} – ${escapeHtml(r.name)}</option>`).join('');
-    if ([...sel.options].some((o) => o.value === v)) sel.value = v;
-  }
 }
 
 function updateTime(val) {
@@ -192,7 +240,8 @@ function tipShow(e, code, name, pct, st) {
   const item = getWbs().find((i) => i.code === code);
   const stLbl = st === 'done' ? '✓ Gotowe' : st === 'active' ? `W toku – ${pct}%` : 'Oczekuje';
   const dur = (item?.end || 0) - (item?.start || 0);
-  t.innerHTML = `<strong>${code} – ${name}</strong>Status: ${stLbl}<br>Czas: M${(item?.start || 0) + 1} – M${item?.end || 0} &nbsp;(${dur} mies.)`;
+  const lvl = item?.level === 3 ? 'L3' : item?.level === 2 ? 'L2' : 'L1';
+  t.innerHTML = `<strong>${code} – ${name}</strong><span class="tip-meta">${lvl}</span>Status: ${stLbl}<br>Czas: M${(item?.start || 0) + 1} – M${item?.end || 0} &nbsp;(${dur} mies.)`;
   t.classList.add('on');
   tipMove(e);
 }
@@ -215,39 +264,74 @@ function pickWp(code) {
   render();
 }
 
+function editorSyncPickInput() {
+  const raw = (document.getElementById('wpPickedLabel')?.value || '').trim();
+  if (!raw) {
+    pickedCode = null;
+    render();
+    return;
+  }
+  const item = getWbs().find((x) => x.code === raw);
+  pickedCode = item ? item.code : null;
+  render();
+}
+
+function newNameValue() {
+  return (document.getElementById('wpNewName')?.value || '').trim();
+}
+
 function editorAddL1() {
-  const name = document.getElementById('wpNewL1Name')?.value || '';
-  addWorkPackageL1(name.trim());
-  document.getElementById('wpNewL1Name').value = '';
+  addWorkPackageL1(newNameValue());
+  const el = document.getElementById('wpNewName');
+  if (el) el.value = '';
   pickedCode = null;
+  const lab = document.getElementById('wpPickedLabel');
+  if (lab) lab.value = '';
 }
 
 function editorAddL2() {
-  const parent = document.getElementById('wpParentSelect')?.value;
-  const name = document.getElementById('wpNewL2Name')?.value || '';
-  if (!parent) return;
-  addWorkPackageL2(parent, name.trim());
-  document.getElementById('wpNewL2Name').value = '';
+  const parent = pickedCode;
+  const p = parent ? getWbs().find((x) => x.code === parent && x.level === 1) : null;
+  if (!p) return;
+  addWorkPackageL2(parent, newNameValue());
+  const el = document.getElementById('wpNewName');
+  if (el) el.value = '';
+}
+
+function editorAddL3() {
+  const parent = pickedCode;
+  const p = parent ? getWbs().find((x) => x.code === parent && x.level === 2) : null;
+  if (!p) return;
+  addWorkPackageL3(parent, newNameValue());
+  const el = document.getElementById('wpNewName');
+  if (el) el.value = '';
+}
+
+function pickedOrInputCode() {
+  return (document.getElementById('wpPickedLabel')?.value || pickedCode || '').trim();
 }
 
 function editorRemove() {
-  const code = (document.getElementById('wpPickedLabel')?.value || pickedCode || '').trim();
+  const code = pickedOrInputCode();
   if (!code || code === '0') return;
+  if (!confirm(`Usunąć „${code}” wraz z całym podziałem (wszystkie poziomy pod spodem)?`)) return;
   removeWorkPackage(code);
   pickedCode = null;
-  document.getElementById('wpPickedLabel').value = '';
+  const lab = document.getElementById('wpPickedLabel');
+  if (lab) lab.value = '';
 }
 
 function editorRename() {
-  const code = (document.getElementById('wpPickedLabel')?.value || pickedCode || '').trim();
+  const code = pickedOrInputCode();
   const name = document.getElementById('wpRenameName')?.value || '';
   if (!code || code === '0') return;
+  if (!name.trim()) return;
   renameWorkPackage(code, name.trim());
   document.getElementById('wpRenameName').value = '';
 }
 
 function editorResetWbs() {
-  if (!confirm('Przywrócić domyślną strukturę WBS i zsynchronizować z harmonogramem? Własne pakiety znikną.')) return;
+  if (!confirm('Przywrócić domyślną strukturę WBS (z przykładowymi L3) i zsynchronizować z harmonogramem?')) return;
   pickedCode = null;
   const lab = document.getElementById('wpPickedLabel');
   if (lab) lab.value = '';
@@ -269,8 +353,10 @@ Object.assign(window, {
   tipHide,
   tipMove,
   pickWp,
+  editorSyncPickInput,
   editorAddL1,
   editorAddL2,
+  editorAddL3,
   editorRemove,
   editorRename,
   editorResetWbs,

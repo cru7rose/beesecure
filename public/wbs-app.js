@@ -9,6 +9,7 @@ import {
   resetStateToFactory,
   reloadStateFromStorage,
   subscribeWbsChanges,
+  getDirectChildCodes,
   totalMonths,
   GRP_COLORS,
 } from './data/wbs-shared.js';
@@ -74,7 +75,7 @@ function renderWBS() {
     return `<div class="wbs-item level${item.level}${selectedCode === item.code ? ' active' : ''}" onclick="sel('${item.code}')">
       <span class="wbs-code">${item.code}</span>
       <span class="wbs-name">${item.name}</span>
-      ${item.level < 3 ? `<span class="progress-pill ${pc}">${pl}</span>` : ''}
+      ${item.level <= 3 ? `<span class="progress-pill ${pc}">${pl}</span>` : ''}
     </div>`;
   }).join('');
 }
@@ -110,8 +111,9 @@ function renderGantt() {
     const pct = iProg(item, currentMonth);
     const c = phColor(item.phase);
     const l1 = item.level === 1;
-    h += `<div class="gantt-row" onclick="sel('${item.code}')" style="${l1 ? 'background:' + c + '08' : ''} ${selectedCode === item.code ? 'background:' + c + '14;' : ''}">
-      <div class="gantt-row-label" style="${l1 ? 'color:' + c + ';font-weight:500' : 'font-size:9px;color:var(--text-muted)'}"><span style="color:var(--text-muted);font-size:8px">${item.code}</span> ${item.name}</div>
+    const l3 = item.level === 3;
+    h += `<div class="gantt-row${l3 ? ' gantt-row--l3' : ''}" onclick="sel('${item.code}')" style="${l1 ? 'background:' + c + '08' : ''} ${selectedCode === item.code ? 'background:' + c + '14;' : ''}">
+      <div class="gantt-row-label" style="${l1 ? 'color:' + c + ';font-weight:500' : l3 ? '' : 'font-size:9px;color:var(--text-muted)'}"><span style="color:var(--text-muted);font-size:8px">${item.code}</span> ${item.name}</div>
       <div class="gantt-bar-area">`;
     for (let m = 0; m <= M; m++) h += `<div class="gantt-grid-line" style="left:${m * p100}%"></div>`;
     h += `<div class="today-line" style="left:${currentMonth * p100}%" data-month="${currentMonth}"></div>`;
@@ -131,7 +133,6 @@ function renderBlockTree() {
   const ov = overall(currentMonth);
   document.getElementById('tree-prog').textContent = `M${currentMonth} – ${ov}%`;
   const roots = WBS.filter((i) => i.level === 1);
-  const kids = (code) => WBS.filter((i) => i.level === 2 && i.code.startsWith(code + '.'));
 
   let h = `<div class="tree-root">`;
   const PROJECT = getProject();
@@ -154,7 +155,7 @@ function renderBlockTree() {
     const c = GRP_COLORS[gi % GRP_COLORS.length];
     const rPct = iProg(root, currentMonth);
     const rSt = iStat(root, currentMonth);
-    const cs = kids(root.code);
+    const cs = getDirectChildCodes(WBS, root.code);
     h += `<div class="l1-col">`;
     h += `<div class="l1-box" style="background:${c}1a;border:1px solid ${c}55;color:${c}cc"
       onmouseenter="tip(event,'${root.code}','${root.name.replace(/'/g, "\\'")}',${rPct},'${rSt}')"
@@ -169,6 +170,8 @@ function renderBlockTree() {
       cs.forEach((k) => {
         const kPct = iProg(k, currentMonth);
         const kSt = iStat(k, currentMonth);
+        const l3s = getDirectChildCodes(WBS, k.code);
+        h += `<div class="tree-l2-stack">`;
         h += `<div class="l2-box" style="background:${c}0d;border:1px solid ${c}33;color:${c}aa"
           onmouseenter="tip(event,'${k.code}','${k.name.replace(/'/g, "\\'")}',${kPct},'${kSt}')"
           onmouseleave="tipHide()" onclick="sel('${k.code}')">
@@ -176,6 +179,22 @@ function renderBlockTree() {
           ${kSt === 'done' ? `<span class="pbadge pb-done" style="font-size:6px">✓</span>` : kSt === 'active' ? `<span class="pbadge pb-act" style="font-size:6px">${kPct}%</span>` : ''}
           <div class="pbar" style="width:${kPct}%;background:${c}66"></div>
         </div>`;
+        if (l3s.length) {
+          h += `<div class="tree-l3-list">`;
+          l3s.forEach((z) => {
+            const zPct = iProg(z, currentMonth);
+            const zSt = iStat(z, currentMonth);
+            h += `<div class="l3-box-tree" style="background:${c}08;border:1px solid ${c}28;color:${c}99"
+              onmouseenter="tip(event,'${z.code}','${z.name.replace(/'/g, "\\'")}',${zPct},'${zSt}')"
+              onmouseleave="tipHide()" onclick="sel('${z.code}')">
+              <div class="l3-code-tree">${z.code}</div>${z.name}
+              ${zSt === 'done' ? `<span class="pbadge pb-done" style="font-size:5px;top:-4px;right:-4px">✓</span>` : zSt === 'active' ? `<span class="pbadge pb-act" style="font-size:5px;top:-4px;right:-4px">${zPct}%</span>` : ''}
+              <div class="pbar" style="width:${zPct}%;background:${c}55"></div>
+            </div>`;
+          });
+          h += `</div>`;
+        }
+        h += `</div>`;
       });
       h += `</div>`;
     }
